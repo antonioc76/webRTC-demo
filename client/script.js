@@ -18,6 +18,7 @@ pc.onicecandidate = e => {
 }
 
 pc.onconnectionstatechange = e => {
+  console.log('connection state change');
   console.log(e);
 }
 
