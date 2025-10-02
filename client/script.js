@@ -30,7 +30,8 @@ socket.on("connect", () => {
   console.log("Connected to signaling server");
 });
 
-socket.on("initiateOffer", () => {
+socket.on("initiateOffer", async () => {
+  await setLocalStream();
   createOffer();
 })
 
@@ -104,6 +105,3 @@ const setRemoteStream = async (stream) => {
     console.error("Error accessing remote stream.", error);
   }
 }
-
-// Run automatically when included
-setLocalStream();
