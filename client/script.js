@@ -40,9 +40,9 @@ socket.on("getOffer", (sdp) => {
   createAnswer(sdp);
 })
 
-socket.on("getAnswer", (sdp) => {
+socket.on("getAnswer", async (sdp) => {
   console.log("Setting remote description")
-  pc.setRemoteDescription(sdp);
+  await pc.setRemoteDescription(sdp);
 })
 
 socket.on("getCandidate", (candidate) => {
@@ -56,8 +56,8 @@ const createOffer = async () => {
   console.log("create offer");
   pc
     .createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: true })
-    .then(sdp => {
-      pc.setLocalDescription(sdp);
+    .then(async (sdp) => {
+      await pc.setLocalDescription(sdp);
       socket.emit("offer", sdp);
     })
     .catch(error => {
@@ -66,16 +66,16 @@ const createOffer = async () => {
 };
 
 const createAnswer = async (sdp) => {
-  pc.setRemoteDescription(sdp).then(() => {
+  await pc.setRemoteDescription(sdp).then(() => {
     console.log("answer set remote description success");
     pc
       .createAnswer({
         offerToReceiveVideo: true,
         offerToReceiveAudio: true,
       })
-      .then(sdp1 => {
+      .then(async (sdp1) => {
         console.log("create answer");
-        pc.setLocalDescription(sdp1);
+        await pc.setLocalDescription(sdp1);
         socket.emit("answer", sdp1);
       })
       .catch(error => {
