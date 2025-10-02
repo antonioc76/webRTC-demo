@@ -86,6 +86,7 @@ const createAnswer = async (sdp) => {
 
 const setLocalStream = async () => {
   try {
+    console.log("setting local stream");
     const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
     const video = document.getElementById("localCam");
     video.srcObject = stream;
@@ -105,3 +106,5 @@ const setRemoteStream = async (stream) => {
     console.error("Error accessing remote stream.", error);
   }
 }
+
+setLocalStream();
