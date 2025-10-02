@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:3000");
+const socket = io("192.168.1.170:3000");
 
 const pc_config = {
   iceServers: []
