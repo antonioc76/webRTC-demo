@@ -33,12 +33,13 @@ socket.on("connect", () => {
 
 socket.on("initiateOffer", async () => {
   await setLocalStream();
-  createOffer();
+  await createOffer();
 })
 
-socket.on("getOffer", (sdp) => {
+socket.on("getOffer", async (sdp) => {
   console.log("Creating answer");
-  createAnswer(sdp);
+  await setLocalStream();
+  await createAnswer(sdp);
 })
 
 socket.on("getAnswer", async (sdp) => {
@@ -55,34 +56,25 @@ socket.on("getCandidate", (candidate) => {
 
 const createOffer = async () => {
   console.log("create offer");
-  pc
-    .createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: true })
-    .then(async (sdp) => {
-      await pc.setLocalDescription(sdp);
-      socket.emit("offer", sdp);
-    })
-    .catch(error => {
-      console.log(error);
-    });
+  try {
+    const sdp = await pc.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: true });
+    await pc.setLocalDescription(sdp);
+    socket.emit("offer", sdp);
+  } catch (error) {
+    console.error(error);
+  }
 };
 
+
 const createAnswer = async (sdp) => {
-  await pc.setRemoteDescription(sdp).then(() => {
-    console.log("answer set remote description success");
-    pc
-      .createAnswer({
-        offerToReceiveVideo: true,
-        offerToReceiveAudio: true,
-      })
-      .then(async (sdp1) => {
-        console.log("create answer");
-        await pc.setLocalDescription(sdp1);
-        socket.emit("answer", sdp1);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  });
+  try {
+    await pc.setRemoteDescription(sdp);
+    const answer = await pc.createAnswer({ offerToReceiveAudio: true, offerToReceiveVideo: true });
+    await pc.setLocalDescription(answer);
+    socket.emit("answer", answer);
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 const setLocalStream = async () => {
